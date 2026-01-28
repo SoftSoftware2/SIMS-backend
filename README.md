@@ -1,57 +1,90 @@
 # SIMS-backend
 
-## How to create modules
-To create a module, you need to ensure this structure:
+## How to Create Modules (Modular Architecture)
 
-```
-app/
-├─ Modules/
-│  ├─ NewModule/
-│  │  ├─ Controllers/
-│  │  │  └─NewModuleController.php
-│  │  ├─ Models/
-│  │  │  └─NewModule.php
-│  │  ├─ Providers
-│  │  │  └─NewModuleProvider.php
-│  │  ├─ Services/
-│  │  ├─ Migrations/
-│  │  └─ routes.php
-│  └─ Tickets/
-├─ Http/
-│  └─ Controllers/      # generic controllers
-└─ Providers/           # register modules and services
-```
-The we need to put the path to composer.json:
+To implement a modular architecture in Laravel, follow these steps to keep your project organized and scalable:
 
+### 1. Directory Structure
+
+Create the following structure inside `app/Modules/` for each new module:
+
+```bash
+app/Modules/
+  └── NewModule/
+      ├── Controllers/
+      │     └── NewModuleController.php
+      ├── Models/
+      │     └── NewModule.php
+      ├── Providers/
+      │     └── NewModuleServiceProvider.php
+      ├── Database/
+      │     ├── Migrations/
+      │     │     └── Migration.php
+      │     └── Seeders/
+      │           └── Seeder.php
+      └── Routes/
+            └── NewModuleRoutes.php
+```
+
+### 2. Update composer.json Autoload
+
+Add your module's namespace to the `autoload` section in `composer.json`:
+
+```json
 "autoload": {
     "psr-4": {
         "App\\": "app/",
-        "Modules\\NewModule\\": "app/Modules/NewModule"
+        "Modules\\NewModule\\": "app/Modules/NewModule/"
     }
 },
+```
+After editing, run:
+```bash
+composer dump-autoload
+```
 
+### 3. Create the Module Service Provider
 
-Then Create the provider to register the module autmoactly
+Create a Service Provider for your module, for example:
 
 ```php
-// app/Modules/User/Providers/UserServiceProvider.php
-namespace Modules\User\Providers;
+// app/Modules/NewModule/Providers/NewModuleServiceProvider.php
+namespace Modules\NewModule\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
-class UserServiceProvider extends ServiceProvider
+class NewModuleServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        // puedes bindear Services aquí
-        // $this->app->bind(UserService::class, fn() => new UserService());
+        // You can bind services here
+        // $this->app->bind(NewService::class, fn() => new NewService());
     }
 
     public function boot()
     {
-        // cargar rutas
-        $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
+        // Load module routes
+        $this->loadRoutesFrom(__DIR__ . '/../routes.php');
     }
 }
 ```
-Then put the provider in the provider list [app.php](config/app.php)
+
+### 4. Register the Service Provider
+
+Add your module's Service Provider to the providers list. You can do this in `config/app.php` or in `bootstrap/providers.php` depending on your setup:
+
+```php
+// config/app.php
+'providers' => [
+    App\Providers\AppServiceProvider::class,
+    // Other providers...
+    Modules\NewModule\Providers\NewModuleServiceProvider::class,
+],
+```
+
+### Recommendations
+- Keep each module self-contained: controllers, models, routes, migrations, and services should be inside the module.
+- Use clear and consistent namespaces.
+- Document each module's functionality for easier maintenance.
+
+---

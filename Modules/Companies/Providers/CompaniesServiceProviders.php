@@ -18,7 +18,7 @@ class CompaniesServiceProviders extends ServiceProvider
     */
     public function boot(): void
     {
-        $this->loadRoutesFrom(__DIR__ . '/../Routes/routes.php');
+        $this->loadRoutesFrom(__DIR__ . '/../Routes/CompaniesRoutes.php');
     }
 
 }
