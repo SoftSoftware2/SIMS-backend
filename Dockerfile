@@ -1,0 +1,43 @@
+FROM php:8.4-fpm
+
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    libpq-dev \
+    zip \
+    unzip \
+    nodejs \
+    npm
+
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN docker-php-ext-install \
+    pdo \
+    pdo_pgsql \
+    pgsql \
+    mbstring \
+    exif \
+    pcntl \
+    bcmath \
+    gd \
+    ctype \
+    fileinfo
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www
+
+COPY . /var/www
+
+RUN composer install --no-interaction --optimize-autoloader --no-dev
+RUN npm install && npm run build
+
+RUN chown -R www-data:www-data /var/www \
+    && chmod -R 755 /var/www/storage
+
+EXPOSE 9000
+
+CMD ["php-fpm"]
