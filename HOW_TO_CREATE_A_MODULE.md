@@ -83,7 +83,7 @@ Add your module's Service Provider to the providers list. You can do this in `co
 ```
 ## Create files
 
-### Migrations
+### Migrations & seeders
 
 ```bash
 php artisan make:migration companies --path=Modules/Companies/Database/Migrations
