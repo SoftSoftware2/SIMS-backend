@@ -12,7 +12,7 @@ class VehicleController extends Controller
 {
     public function index(): JsonResponse
     {
-        $vehicles = Vehicle::all();
+        $vehicles = Vehicle::with('vehicleType')->get();
 
         return response()->json([
             'status' => 'success',
@@ -39,6 +39,8 @@ class VehicleController extends Controller
 
     public function show(Vehicle $vehicle): JsonResponse
     {
+        $vehicle->load('vehicleType');
+        
         return response()->json([
             'status' => 'success',
             'data' => $vehicle
