@@ -81,10 +81,8 @@ Add your module's Service Provider to the providers list. You can do this in `co
     Modules\NewModule\Providers\NewModuleServiceProvider::class,
 ],
 ```
+## Create files
 
-### Recommendations
-- Keep each module self-contained: controllers, models, routes, migrations, and services should be inside the module.
-- Use clear and consistent namespaces.
-- Document each module's functionality for easier maintenance.
-
+### Migrations
+php artisan make:migration companies --path=Modules/Companies/Database/Migrations
 ---
