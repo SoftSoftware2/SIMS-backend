@@ -84,5 +84,8 @@ Add your module's Service Provider to the providers list. You can do this in `co
 ## Create files
 
 ### Migrations
+
+```bash
 php artisan make:migration companies --path=Modules/Companies/Database/Migrations
+```
 ---
