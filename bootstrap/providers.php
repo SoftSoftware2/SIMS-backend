@@ -5,5 +5,6 @@ return [
 
     //Modules
 
-    Modules\Companies\Providers\CompaniesServiceProviders::class
+    Modules\Companies\Providers\CompaniesServiceProviders::class,
+    Modules\Vehicles\Providers\VehiclesServiceProviders::class,
 ];
