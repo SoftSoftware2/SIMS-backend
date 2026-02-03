@@ -3,7 +3,7 @@
 namespace Modules\Auth\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use Modules\Users\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
