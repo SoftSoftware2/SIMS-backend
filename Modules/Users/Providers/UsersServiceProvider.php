@@ -20,5 +20,6 @@ class UsersServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadRoutesFrom(__DIR__ . '/../Routes/UserRoutes.php');
+        $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
     }
 }
