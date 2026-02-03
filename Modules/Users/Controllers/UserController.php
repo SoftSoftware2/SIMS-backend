@@ -1,14 +1,14 @@
 <?php
 
-namespace Modules\users\controllers;
+namespace Modules\Users\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
-use Modules\users\requests\StoreUserRequest;
-use Modules\users\requests\UpdateUserRequest;
-use Modules\users\resources\UserResource;
+use Modules\Users\Requests\StoreUserRequest;
+use Modules\Users\Requests\UpdateUserRequest;
+use Modules\Users\Resources\UserResource;
 
 class UserController extends Controller
 {

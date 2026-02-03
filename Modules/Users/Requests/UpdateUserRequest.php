@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\users\requests;
+namespace Modules\Users\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -24,9 +24,11 @@ class UpdateUserRequest extends FormRequest
         $userId = $this->route('user');
         
         return [
-            'name' => 'sometimes|required|string|max:255',
-            'email' => 'sometimes|required|string|email|max:255|unique:users,email,' . $userId,
+            'name' => 'sometimes|required|string|max:50',
+            'surname' => 'sometimes|required|string|max:50',
+            'email' => 'sometimes|required|string|email|max:70|unique:users,email,' . $userId,
             'password' => 'sometimes|nullable|string|min:8|confirmed',
+            'role_id' => 'nullable|integer',
         ];
     }
 
@@ -38,12 +40,13 @@ class UpdateUserRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'The name field is required.',
-            'email.required' => 'The email field is required.',
-            'email.email' => 'The email must be a valid email address.',
-            'email.unique' => 'The email has already been taken.',
-            'password.min' => 'The password must be at least 8 characters.',
-            'password.confirmed' => 'The password confirmation does not match.',
+            'name.required' => 'El nom és obligatori.',
+            'surname.required' => 'El cognom és obligatori.',
+            'email.required' => 'El correu electrònic és obligatori.',
+            'email.email' => 'El correu electrònic ha de ser vàlid.',
+            'email.unique' => 'Aquest correu electrònic ja està registrat.',
+            'password.min' => 'La contrasenya ha de tenir almenys 8 caràcters.',
+            'password.confirmed' => 'La confirmació de contrasenya no coincideix.',
         ];
     }
 }

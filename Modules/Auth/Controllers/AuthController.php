@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\auth\controllers;
+namespace Modules\Auth\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -11,9 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    /**
-     * Register a new user and return token.
-     */
+    
     public function register(Request $request): JsonResponse
     {
         $validatedData = $request->validate([
@@ -41,9 +39,7 @@ class AuthController extends Controller
         ], 201);
     }
 
-    /**
-     * Login user and return token.
-     */
+   
     public function login(Request $request): JsonResponse
     {
         $credentials = $request->validate([
@@ -72,12 +68,10 @@ class AuthController extends Controller
         ], 200);
     }
 
-    /**
-     * Logout user (revoke token).
-     */
+    
     public function logout(Request $request): JsonResponse
     {
-        // Revoke the token that was used to authenticate the current request
+        
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([
@@ -86,9 +80,7 @@ class AuthController extends Controller
         ], 200);
     }
 
-    /**
-     * Get details of authenticated user.
-     */
+    
     public function me(Request $request): JsonResponse
     {
         return response()->json([

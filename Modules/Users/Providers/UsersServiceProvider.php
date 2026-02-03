@@ -1,10 +1,10 @@
 <?php
 
-namespace Modules\auth\providers;
+namespace Modules\Users\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
-class AuthServiceProvider extends ServiceProvider
+class UsersServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
@@ -19,6 +19,6 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
+        $this->loadRoutesFrom(__DIR__ . '/../Routes/UserRoutes.php');
     }
 }
