@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    
+
     public function register(Request $request): JsonResponse
     {
         $validatedData = $request->validate([
@@ -23,7 +23,7 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
-            'pwd' => Hash::make($validatedData['password']),
+            'password' => Hash::make($validatedData['password']),
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -39,7 +39,7 @@ class AuthController extends Controller
         ], 201);
     }
 
-   
+
     public function login(Request $request): JsonResponse
     {
         $credentials = $request->validate([
@@ -68,10 +68,10 @@ class AuthController extends Controller
         ], 200);
     }
 
-    
+
     public function logout(Request $request): JsonResponse
     {
-        
+
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([
@@ -80,7 +80,7 @@ class AuthController extends Controller
         ], 200);
     }
 
-    
+
     public function me(Request $request): JsonResponse
     {
         return response()->json([
