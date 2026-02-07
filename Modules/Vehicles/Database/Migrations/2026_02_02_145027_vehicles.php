@@ -6,12 +6,14 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    protected $connection = 'company_1';
+
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('vehicles', function (Blueprint $table) {
+        Schema::connection('company_1')->create('vehicles', function (Blueprint $table) {
             $table->id();
             $table->string('license', 15);
             $table->enum('status', ['available', 'using', 'stopped'])->default('available');
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('vehicles');
+        Schema::connection('company_1')->dropIfExists('vehicles');
     }
 };

@@ -10,6 +10,7 @@ class VehicleType extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $connection = 'company_1';
     protected $table = 'vehicle_types';
 
     protected $fillable = [
