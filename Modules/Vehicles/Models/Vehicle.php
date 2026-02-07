@@ -11,7 +11,7 @@ class Vehicle extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $connection = 'company_1';
+    protected $connection = 'tenant';
     protected $table = 'vehicles';
     protected $fillable = ['license', 'status', 'vehicle_type_id'];
 

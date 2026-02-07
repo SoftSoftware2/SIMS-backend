@@ -23,11 +23,11 @@ class VehicleTypeController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:50|unique:vehicle_types,name',
+            'name' => 'required|string|max:50|unique:tenant.vehicle_types,name',
             'description' => 'nullable|string',
         ]);
 
-        $vehicleType = vehicleType::create($validated);
+        $vehicleType = VehicleType::create($validated);
 
         return response()->json([
             'status' => 'success',
@@ -45,10 +45,10 @@ class VehicleTypeController extends Controller
         ], 200);
     }
 
-    public function update(Request $request, Vehicletype $vehicleType): JsonResponse
+    public function update(Request $request, VehicleType $vehicleType): JsonResponse
     {
         $validated = $request->validate([
-            'name' => 'sometimes|string|max:50|unique:vehicle_types,name, ' . $vehicleType->id,
+            'name' => 'sometimes|string|max:50|unique:tenant.vehicle_types,name, ' . $vehicleType->id,
             'description' => 'nullable|string',
         ]);
 

@@ -23,9 +23,9 @@ class VehicleController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'license' => 'required|unique:vehicles,license|max:15',
+            'license' => 'required|unique:tenant.vehicles,license|max:15',
             'status' => 'required|in:available,using,stopped',
-            'vehicle_type_id' => 'required|exists:vehicle_types,id'
+            'vehicle_type_id' => 'required|exists:tenant.vehicle_types,id'
         ]);
 
         $vehicle = Vehicle::create($validated);
@@ -40,7 +40,7 @@ class VehicleController extends Controller
     public function show(Vehicle $vehicle): JsonResponse
     {
         $vehicle->load('vehicleType');
-        
+
         return response()->json([
             'status' => 'success',
             'data' => $vehicle
@@ -50,9 +50,9 @@ class VehicleController extends Controller
     public function update(Request $request, Vehicle $vehicle): JsonResponse
     {
         $validated = $request->validate([
-            'license' => 'sometimes|max:15|unique:vehicles,license,' . $vehicle->id,
+            'license' => 'sometimes|max:15|unique:tenant.vehicles,license,' . $vehicle->id,
             'status' => 'sometimes|in:available,using,stopped',
-            'vehicle_type_id' => 'sometimes|exists:vehicle_types,id'
+            'vehicle_type_id' => 'sometimes|exists:tenant.vehicle_types,id'
         ]);
 
         $vehicle->update($validated);
