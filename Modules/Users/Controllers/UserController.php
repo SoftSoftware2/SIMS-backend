@@ -16,8 +16,15 @@ class UserController extends Controller
    }
 
    public function store(Request $request): JsonResponse{
+        // Verificar si el usuario ya existe
+        if(User::where('email', $request->email)->exists()){
+            return response()->json([
+                'message' => 'A user with this email already exists'
+            ], 409);
+        }
+
         $data = $request->validate([
-            'email'      => 'required|string|email|max:70|unique:users',
+            'email'      => 'required|string|email|max:70',
             'name'       => 'required|string|max:50',
             'password'   => 'required|string|min:8'
         ]);
@@ -25,7 +32,6 @@ class UserController extends Controller
         $user = User::create($data);
 
         return response()->json([
-            'status'  => 'success',
             'data'    => $user
         ], 201);
    }
@@ -35,7 +41,6 @@ class UserController extends Controller
 
     if(!$user){
         return response()->json([
-            'status' => 'error',
             'message' => 'User not found'
         ], 404);
     }
@@ -44,5 +49,21 @@ class UserController extends Controller
         'data' => $user
     ], 200);
 
+   }
+
+   public function destroy($id): JsonResponse{
+    $user = User::find($id);
+    
+    if(!$user){
+        return response()->json([
+            'message' => 'User not found'
+        ], 404);
+    }
+    
+    $user->delete();
+    
+    return response()->json([
+        'message' => 'User has been deleted'
+    ], 200);
    }
 }
