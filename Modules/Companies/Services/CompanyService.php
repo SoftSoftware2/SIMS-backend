@@ -1,0 +1,82 @@
+<?php
+
+namespace Modules\Companies\Services;
+
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
+
+class CompanyService
+{
+
+    public function createCompanyDatabase(string $dbName, string $dbUser, string $dbPassword): bool
+    {
+        try {
+            $defaultConnection = Config::get('database.default');
+            DB::connection($defaultConnection)->statement("CREATE DATABASE {$dbName}");
+            DB::connection($defaultConnection)->statement("GRANT ALL PRIVILEGES ON DATABASE {$dbName} TO {$dbUser}");
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error("Error creating database: " . $e->getMessage());
+            return false;
+        }
+    }
+
+
+    public function runCompanyMigrations(string $dbName, string $dbUser, string $dbPassword): bool
+    {
+        try {
+            Config::set('database.connections.company_temp', [
+                'driver' => 'pgsql',
+                'host' => env('DB_HOST'),
+                'port' => env('DB_PORT'),
+                'database' => $dbName,
+                'username' => $dbUser,
+                'password' => $dbPassword,
+                'charset' => 'utf8',
+                'prefix' => '',
+                'prefix_indexes' => true,
+                'search_path' => 'public',
+                'sslmode' => 'prefer',
+            ]);
+
+            DB::purge('company_temp');
+
+            Artisan::call('migrate', [
+                '--database' => 'company_temp',
+                '--path' => 'Modules/Vehicles/Database/Migrations',
+                '--force' => true,
+            ]);
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error("Error running migrations: " . $e->getMessage());
+            return false;
+        }
+    }
+
+
+    public function provisionCompany(string $dbName, string $dbUser, string $dbPassword): array
+    {
+        if (!$this->createCompanyDatabase($dbName, $dbUser, $dbPassword)) {
+            return [
+                'success' => false,
+                'message' => 'Failed to create database'
+            ];
+        }
+
+        if (!$this->runCompanyMigrations($dbName, $dbUser, $dbPassword)) {
+            return [
+                'success' => false,
+                'message' => 'Database created but migrations failed'
+            ];
+        }
+
+        return [
+            'success' => true,
+            'message' => 'Company provisioned successfully'
+        ];
+    }
+}
