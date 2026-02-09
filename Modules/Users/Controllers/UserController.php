@@ -17,15 +17,15 @@ class UserController extends Controller
 
    public function store(Request $request): JsonResponse{
         $data = $request->validate([
-            'email'      => 'requiered|string|max:70',
-            'name'       => 'requiered|string|max:50',
-            'password'   => 'requiered|string|min:8'
+            'email'      => 'required|string|email|max:70|unique:users',
+            'name'       => 'required|string|max:50',
+            'password'   => 'required|string|min:8'
         ]);
 
         $user = User::create($data);
 
         return response()->json([
-            'status'  => 'susccess',
+            'status'  => 'success',
             'data'    => $user
         ], 201);
    }
