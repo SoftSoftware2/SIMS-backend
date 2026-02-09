@@ -6,14 +6,14 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    protected $connection = 'company_1';
+    protected $connection = 'tenant';
 
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::connection('company_1')->create('vehicles', function (Blueprint $table) {
+        Schema::connection('tenant')->create('vehicles', function (Blueprint $table) {
             $table->id();
             $table->string('license', 15);
             $table->enum('status', ['available', 'using', 'stopped'])->default('available');
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::connection('company_1')->dropIfExists('vehicles');
+        Schema::connection('tenant')->dropIfExists('vehicles');
     }
 };

@@ -12,7 +12,11 @@ class VehicleService
         return Vehicle::with('vehicleType')->get();
     }
 
-    pubilic function GetVehicleById(int $id)
+
+    public function GetVehicleById(int $id): Vehicle
+    {
+        return Vehicle::with('VehicleType')->findOrFail($id);
+    }
 
 
     public function createVehicle(array $data): Vehicle
