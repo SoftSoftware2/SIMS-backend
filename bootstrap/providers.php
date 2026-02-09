@@ -7,5 +7,4 @@ return [
 
     Modules\Companies\Providers\CompaniesServiceProviders::class,
     Modules\Users\Providers\UsersServiceProvider::class,
-    Modules\Auth\Providers\AuthServiceProvider::class,
 ];

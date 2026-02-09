@@ -3,7 +3,7 @@
 namespace Modules\Users\Providers;
 
 use Illuminate\Support\ServiceProvider;
-
+use Illuminate\Support\Facades\Route;
 class UsersServiceProvider extends ServiceProvider
 {
     /**
@@ -14,12 +14,12 @@ class UsersServiceProvider extends ServiceProvider
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-        $this->loadRoutesFrom(__DIR__ . '/../Routes/UserRoutes.php');
+        Route::middleware('api')
+            ->prefix('api')
+            ->group(base_path('Modules/Users/Routes/UserRoutes.php'));
+
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
     }
 }
