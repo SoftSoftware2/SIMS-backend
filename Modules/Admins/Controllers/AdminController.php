@@ -3,20 +3,22 @@
 namespace Modules\Admins\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\AdminResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Modules\Admin\Models\Admin;
+use Modules\Admins\Models\Admin;
 
 
 
 class AdminController extends Controller
 {
    public function index(): JsonResponse {
-    return response()->json(Admin::all());
+    $admins = Admin::all();
+    return response()->json(AdminResource::collection($admins));
    }
 
    public function store(Request $request): JsonResponse{
-        // Verificar si el usuario ya existe
+
         if(Admin::where('email', $request->email)->exists()){
             return response()->json([
                 'message' => 'A admin with this email already exists'
@@ -32,7 +34,7 @@ class AdminController extends Controller
         $admin = Admin::create($data);
 
         return response()->json([
-            'data'    => $admin
+            'data'    => new AdminResource(($admin))
         ], 201);
    }
 
@@ -46,7 +48,7 @@ class AdminController extends Controller
     }
 
     return response()->json([
-        'data' => $admin
+        'data' => new AdminResource($admin)
     ], 200);
 
    }
@@ -70,7 +72,7 @@ class AdminController extends Controller
 
     return response()->json([
         'message' => 'admin updated successfully',
-        'data' => $admin
+        'data' => new AdminResource($admin)
     ], 200);
    }
 
