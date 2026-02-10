@@ -12,35 +12,26 @@ class VehicleService
         return Vehicle::with('vehicleType')->get();
     }
 
-
-    public function GetVehicleById(int $id): Vehicle
+    public function getVehicleById(int $id): Vehicle
     {
-        return Vehicle::with('VehicleType')->findOrFail($id);
+        return Vehicle::with('vehicleType')->findOrFail($id);
     }
-
 
     public function createVehicle(array $data): Vehicle
     {
-        if (Vehicle::where('license', $data['license'])->exists()) {
-            throw new \Exception('Vehicle with this license already exists');
-        }
-
         return Vehicle::create($data);
     }
-
 
     public function updateVehicle(Vehicle $vehicle, array $data): Vehicle
     {
         $vehicle->update($data);
-        return $vehicle;
+        return $vehicle->fresh('vehicleType');
     }
-
 
     public function deleteVehicle(Vehicle $vehicle): bool
     {
         return $vehicle->delete();
     }
-
 
     public function getVehiclesByStatus(string $status): Collection
     {
