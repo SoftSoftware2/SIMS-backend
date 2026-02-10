@@ -1,10 +1,10 @@
 <?php
 
-namespace Modules\Users\Providers;
+namespace Modules\Admins\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
-class UsersServiceProvider extends ServiceProvider
+class AdminServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
@@ -18,7 +18,7 @@ class UsersServiceProvider extends ServiceProvider
     {
         Route::middleware('api')
             ->prefix('api')
-            ->group(base_path('Modules/Users/Routes/UserRoutes.php'));
+            ->group(base_path('Modules/Admins/Routes/AdminRoutes.php'));
 
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
     }

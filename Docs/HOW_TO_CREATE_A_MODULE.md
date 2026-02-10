@@ -74,7 +74,7 @@ class NewModuleServiceProvider extends ServiceProvider
 Add your module's Service Provider to the providers list. You can do this in `config/app.php` or in `bootstrap/providers.php` depending on your setup:
 
 ```php
-// config/app.php
+// config/providers.php
 'providers' => [
     App\Providers\AppServiceProvider::class,
     // Other providers...
@@ -86,6 +86,6 @@ Add your module's Service Provider to the providers list. You can do this in `co
 ### Migrations & seeders
 
 ```bash
-php artisan make:migration companies --path=Modules/Companies/Database/Migrations
+php artisan make:migration newmodule --path=Modules/NewModule/Database/Migrations
 ```
 ---

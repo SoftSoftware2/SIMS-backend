@@ -6,12 +6,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Modules\Users\Models\User;
+use Modules\Admins\Models\Admin;
 
 class AuthController extends Controller
 {
     /**
-     * Login user and generate token
+     * Login admin and generate token
      */
     public function login(Request $request): JsonResponse
     {
@@ -21,27 +21,27 @@ class AuthController extends Controller
         ]);
 
         // Buscar usuario por email
-        $user = User::where('email', $request->email)->first();
+        $admin = Admin::where('email', $request->email)->first();
 
         // Verificar si el usuario existe y la contraseña es correcta
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (!$admin || !Hash::check($request->password, $admin->password)) {
             return response()->json([
                 'message' => 'Invalid credentials'
             ], 401);
         }
 
         // Generar token
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $admin->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'message' => 'Login successful',
             'token' => $token,
-            'user' => $user
+            'admin' => $admin
         ], 200);
     }
 
     /**
-     * Logout user (revoke current token)
+     * Logout admin (revoke current token)
      */
     public function logout(Request $request): JsonResponse
     {

@@ -1,12 +1,11 @@
 <?php
 
-namespace Modules\Users\Database\Seeders;
+namespace Modules\Admins\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Modules\Users\Models\User;
-use Illuminate\Support\Facades\Hash;
+use Modules\Admin\Models\Admin;
 
-class UserSeeders extends Seeder
+class AdminSeeders extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,7 +14,7 @@ class UserSeeders extends Seeder
     {
         //Example
 
-        $users = [
+        $admins = [
             [
                 'name' => 'Jordi',
                 'email' => 'jordi@sims.com',
@@ -33,11 +32,11 @@ class UserSeeders extends Seeder
             ],
         ];
 
-        foreach ($users as $userData) {
-            User::create([
-                'name' => $userData['name'],
-                'email' => $userData['email'],
-                'password' => $userData['password'], // Se hasheará automáticamente por el cast
+        foreach ($admins as $adminData) {
+            Admin::create([
+                'name' => $adminData['name'],
+                'email' => $adminData['email'],
+                'password' => $adminData['password'],
             ]);
         }
     }
