@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Modules\Users\Models\User;
+use Modules\Companies\Database\Seeders\CompanySeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -20,6 +21,10 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+        ]);
+
+        $this->call([
+            CompanySeeder::class,
         ]);
     }
 }
