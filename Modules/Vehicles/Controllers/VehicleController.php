@@ -4,74 +4,72 @@ namespace Modules\Vehicles\Controllers;
 
 use App\Http\Controllers\Controller;
 use Modules\Vehicles\Models\Vehicle;
-use Illuminate\Http\Request;
+use Modules\Vehicles\Requests\StoreVehicleRequest;
+use Modules\Vehicles\Requests\UpdateVehicleRequest;
+use Modules\Vehicles\Resources\VehicleResource;
+use Modules\Vehicles\Services\VehicleService;
 use Illuminate\Http\JsonResponse;
 
 class VehicleController extends Controller
-
 {
+    protected VehicleService $vehicleService;
+
+    public function __construct(VehicleService $vehicleService)
+    {
+        $this->vehicleService = $vehicleService;
+    }
+
     public function index(): JsonResponse
     {
-        $vehicles = Vehicle::with('vehicleType')->get();
+        $vehicles = $this->vehicleService->getAllVehicles();
 
         return response()->json([
-            'status' => 'success',
-            'data' => $vehicles
+            'success' => true,
+            'data' => VehicleResource::collection($vehicles),
+            'message' => 'Vehicles retrieved successfully'
         ], 200);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(StoreVehicleRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'license' => 'required|unique:tenant.vehicles,license|max:15',
-            'status' => 'required|in:available,using,stopped',
-            'vehicle_type_id' => 'required|exists:tenant.vehicle_types,id'
-        ]);
-
-        $vehicle = Vehicle::create($validated);
+        $vehicle = $this->vehicleService->createVehicle($request->validated());
 
         return response()->json([
-            'status' => 'success',
+            'success' => true,
             'message' => 'Vehicle created successfully',
-            'data' => $vehicle
+            'data' => new VehicleResource($vehicle)
         ], 201);
     }
 
-    public function show(Vehicle $vehicle): JsonResponse
+    public function show(int $id): JsonResponse
     {
-        $vehicle->load('vehicleType');
+        $vehicle = $this->vehicleService->getVehicleById($id);
 
         return response()->json([
-            'status' => 'success',
-            'data' => $vehicle
+            'success' => true,
+            'data' => new VehicleResource($vehicle),
+            'message' => 'Vehicle retrieved successfully'
         ], 200);
     }
 
-    public function update(Request $request, Vehicle $vehicle): JsonResponse
+    public function update(UpdateVehicleRequest $request, Vehicle $vehicle): JsonResponse
     {
-        $validated = $request->validate([
-            'license' => 'sometimes|max:15|unique:tenant.vehicles,license,' . $vehicle->id,
-            'status' => 'sometimes|in:available,using,stopped',
-            'vehicle_type_id' => 'sometimes|exists:tenant.vehicle_types,id'
-        ]);
-
-        $vehicle->update($validated);
+        $vehicle = $this->vehicleService->updateVehicle($vehicle, $request->validated());
 
         return response()->json([
-            'status' => 'success',
-            'message' => 'Vehicle updated',
-            'data' => $vehicle
+            'success' => true,
+            'message' => 'Vehicle updated successfully',
+            'data' => new VehicleResource($vehicle)
         ], 200);
     }
 
     public function destroy(Vehicle $vehicle): JsonResponse
     {
-        $vehicle->delete();
+        $this->vehicleService->deleteVehicle($vehicle);
 
         return response()->json([
-            'status' => 'success',
-            'message' => 'Vehicle deleted'
+            'success' => true,
+            'message' => 'Vehicle deleted successfully'
         ], 200);
     }
-
 }
