@@ -43,6 +43,7 @@ class Company extends Model
     {
         return [
             'created_by_id' => 'integer',
+            'db_pwd' => 'encrypted',
         ];
     }
 }
