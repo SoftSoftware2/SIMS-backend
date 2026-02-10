@@ -3,8 +3,6 @@
 namespace Modules\Companies\Services;
 
 use Modules\Companies\Models\Company;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
 
 class CompanyService
 {
@@ -21,21 +19,12 @@ class CompanyService
      */
     public function createCompany(array $data)
     {
-        $validator = Validator::make($data, [
-            'created_by_id' => 'required|integer|exists:users,id',
-            'name' => 'required|string|max:50',
-            'description' => 'nullable|string|max:255',
-            'cif' => 'required|string|max:25|unique:companies',
-            'db_conexion' => 'required|string|max:255',
-            'db_user' => 'required|string|max:255',
-            'db_pwd' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
+        // Check if created_by_id is provided, if not, use authenticated user
+        if (!isset($data['created_by_id'])) {
+            $data['created_by_id'] = auth()->id();
         }
 
-        return Company::create($validator->validated());
+        return Company::create($data);
     }
 
     /**
@@ -57,21 +46,7 @@ class CompanyService
             return null;
         }
 
-        $validator = Validator::make($data, [
-            'created_by_id' => 'sometimes|required|integer|exists:users,id',
-            'name' => 'sometimes|required|string|max:50',
-            'description' => 'sometimes|nullable|string|max:255',
-            'cif' => 'sometimes|required|string|max:25|unique:companies,cif,' . $id,
-            'db_conexion' => 'sometimes|required|string|max:255',
-            'db_user' => 'sometimes|required|string|max:255',
-            'db_pwd' => 'sometimes|required|string',
-        ]);
-
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
-
-        $company->update($validator->validated());
+        $company->update($data);
 
         return $company;
     }

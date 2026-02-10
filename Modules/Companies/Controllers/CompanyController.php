@@ -4,9 +4,10 @@ namespace Modules\Companies\Controllers;
 
 use App\Http\Controllers\Controller;
 use Modules\Companies\Services\CompanyService;
+use Modules\Companies\Requests\StoreCompanyRequest;
+use Modules\Companies\Requests\UpdateCompanyRequest;
+use Modules\Companies\Resources\CompanyResource;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 
 class CompanyController extends Controller
 {
@@ -26,7 +27,7 @@ class CompanyController extends Controller
         
         return response()->json([
             'success' => true,
-            'data' => $companies,
+            'data' => CompanyResource::collection($companies),
             'message' => 'Companies retrieved successfully'
         ], 200);
     }
@@ -34,23 +35,15 @@ class CompanyController extends Controller
     /**
      * Store a newly created company.
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreCompanyRequest $request): JsonResponse
     {
-        try {
-            $company = $this->companyService->createCompany($request->all());
+        $company = $this->companyService->createCompany($request->validated());
 
-            return response()->json([
-                'success' => true,
-                'data' => $company,
-                'message' => 'Company created successfully'
-            ], 201);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed',
-                'errors' => $e->errors()
-            ], 422);
-        }
+        return response()->json([
+            'success' => true,
+            'data' => new CompanyResource($company),
+            'message' => 'Company created successfully'
+        ], 201);
     }
 
     /**
@@ -69,7 +62,7 @@ class CompanyController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $company,
+            'data' => new CompanyResource($company),
             'message' => 'Company retrieved successfully'
         ], 200);
     }
@@ -77,30 +70,22 @@ class CompanyController extends Controller
     /**
      * Update the specified company.
      */
-    public function update(Request $request, int $id): JsonResponse
+    public function update(UpdateCompanyRequest $request, int $id): JsonResponse
     {
-        try {
-            $company = $this->companyService->updateCompany($id, $request->all());
+        $company = $this->companyService->updateCompany($id, $request->validated());
 
-            if (!$company) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Company not found'
-                ], 404);
-            }
-
-            return response()->json([
-                'success' => true,
-                'data' => $company,
-                'message' => 'Company updated successfully'
-            ], 200);
-        } catch (ValidationException $e) {
+        if (!$company) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validation failed',
-                'errors' => $e->errors()
-            ], 422);
+                'message' => 'Company not found'
+            ], 404);
         }
+
+        return response()->json([
+            'success' => true,
+            'data' => new CompanyResource($company),
+            'message' => 'Company updated successfully'
+        ], 200);
     }
 
     /**
