@@ -2,22 +2,12 @@
 
 namespace Modules\Companies\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Modules\Companies\Database\Factories\CompanyFactory;
 
 class Company extends Model
 {
-    use HasFactory, SoftDeletes;
-
-    /**
-     * Create a new factory instance for the model.
-     */
-    protected static function newFactory()
-    {
-        return CompanyFactory::new();
-    }
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.

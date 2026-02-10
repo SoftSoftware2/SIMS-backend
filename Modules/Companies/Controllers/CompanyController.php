@@ -3,24 +3,30 @@
 namespace Modules\Companies\Controllers;
 
 use App\Http\Controllers\Controller;
-use Modules\Companies\Models\Company;
+use Modules\Companies\Services\CompanyService;
 use Illuminate\Http\JsonResponse;
-use Modules\Companies\Requests\StoreCompanyRequest;
-use Modules\Companies\Requests\UpdateCompanyRequest;
-use Modules\Companies\Resources\CompanyResource;
+use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class CompanyController extends Controller
 {
+    protected $companyService;
+
+    public function __construct(CompanyService $companyService)
+    {
+        $this->companyService = $companyService;
+    }
+
     /**
      * Display a listing of companies.
      */
     public function index(): JsonResponse
     {
-        $companies = Company::all();
+        $companies = $this->companyService->getAllCompanies();
         
         return response()->json([
             'success' => true,
-            'data' => CompanyResource::collection($companies),
+            'data' => $companies,
             'message' => 'Companies retrieved successfully'
         ], 200);
     }
@@ -28,17 +34,23 @@ class CompanyController extends Controller
     /**
      * Store a newly created company.
      */
-    public function store(StoreCompanyRequest $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
-        $validated = $request->validated();
+        try {
+            $company = $this->companyService->createCompany($request->all());
 
-        $company = Company::create($validated);
-
-        return response()->json([
-            'success' => true,
-            'data' => new CompanyResource($company),
-            'message' => 'Company created successfully'
-        ], 201);
+            return response()->json([
+                'success' => true,
+                'data' => $company,
+                'message' => 'Company created successfully'
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        }
     }
 
     /**
@@ -46,7 +58,7 @@ class CompanyController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $company = Company::find($id);
+        $company = $this->companyService->getCompanyById($id);
 
         if (!$company) {
             return response()->json([
@@ -57,7 +69,7 @@ class CompanyController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => new CompanyResource($company),
+            'data' => $company,
             'message' => 'Company retrieved successfully'
         ], 200);
     }
@@ -65,26 +77,30 @@ class CompanyController extends Controller
     /**
      * Update the specified company.
      */
-    public function update(UpdateCompanyRequest $request, int $id): JsonResponse
+    public function update(Request $request, int $id): JsonResponse
     {
-        $company = Company::find($id);
+        try {
+            $company = $this->companyService->updateCompany($id, $request->all());
 
-        if (!$company) {
+            if (!$company) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Company not found'
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $company,
+                'message' => 'Company updated successfully'
+            ], 200);
+        } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Company not found'
-            ], 404);
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
         }
-
-        $validated = $request->validated();
-
-        $company->update($validated);
-
-        return response()->json([
-            'success' => true,
-            'data' => new CompanyResource($company),
-            'message' => 'Company updated successfully'
-        ], 200);
     }
 
     /**
@@ -92,16 +108,14 @@ class CompanyController extends Controller
      */
     public function destroy(int $id): JsonResponse
     {
-        $company = Company::find($id);
+        $deleted = $this->companyService->deleteCompany($id);
 
-        if (!$company) {
+        if (!$deleted) {
             return response()->json([
                 'success' => false,
                 'message' => 'Company not found'
             ], 404);
         }
-
-        $company->delete();
 
         return response()->json([
             'success' => true,
