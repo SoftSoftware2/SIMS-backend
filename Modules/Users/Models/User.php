@@ -46,4 +46,14 @@ class User extends Authenticatable
             'pwd' => 'hashed',
         ];
     }
+
+    /**
+     * Get the password for the user.
+     *
+     * @return string
+     */
+    public function getAuthPassword()
+    {
+        return $this->pwd;
+    }
 }

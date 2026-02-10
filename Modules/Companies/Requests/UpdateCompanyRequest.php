@@ -42,15 +42,15 @@ class UpdateCompanyRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'created_by_id.required' => 'L\'usuari creador és obligatori.',
-            'created_by_id.exists' => 'L\'usuari especificat no existeix.',
-            'name.required' => 'El nom de l\'empresa és obligatori.',
-            'name.max' => 'El nom no pot superar els 50 caràcters.',
-            'cif.required' => 'El CIF és obligatori.',
-            'cif.unique' => 'Aquest CIF ja està registrat.',
-            'db_conexion.required' => 'La connexió de base de dades és obligatòria.',
-            'db_user.required' => 'L\'usuari de base de dades és obligatori.',
-            'db_pwd.required' => 'La contrasenya de base de dades és obligatòria.',
+            'created_by_id.required' => 'The creator user is required.',
+            'created_by_id.exists' => 'The specified user does not exist.',
+            'name.required' => 'The company name is required.',
+            'name.max' => 'The name cannot exceed 50 characters.',
+            'cif.required' => 'The CIF is required.',
+            'cif.unique' => 'This CIF is already registered.',
+            'db_conexion.required' => 'The database connection is required.',
+            'db_user.required' => 'The database user is required.',
+            'db_pwd.required' => 'The database password is required.',
         ];
     }
 }

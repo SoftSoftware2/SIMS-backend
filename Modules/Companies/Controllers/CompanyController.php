@@ -44,7 +44,7 @@ class CompanyController extends Controller
     /**
      * Display the specified company.
      */
-    public function show(string $id): JsonResponse
+    public function show(int $id): JsonResponse
     {
         $company = Company::find($id);
 
@@ -65,7 +65,7 @@ class CompanyController extends Controller
     /**
      * Update the specified company.
      */
-    public function update(UpdateCompanyRequest $request, string $id): JsonResponse
+    public function update(UpdateCompanyRequest $request, int $id): JsonResponse
     {
         $company = Company::find($id);
 
@@ -90,7 +90,7 @@ class CompanyController extends Controller
     /**
      * Remove the specified company.
      */
-    public function destroy(string $id): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
         $company = Company::find($id);
 
