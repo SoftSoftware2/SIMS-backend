@@ -41,9 +41,9 @@ class VehicleController extends Controller
         ], 201);
     }
 
-    public function show(Vehicle $vehicle): JsonResponse
+    public function show(int $id): JsonResponse
     {
-        $vehicle->load('vehicleType');
+        $vehicle = $this->vehicleService->getVehicleById($id);
 
         return response()->json([
             'success' => true,
