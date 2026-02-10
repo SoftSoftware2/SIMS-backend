@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         $this->call([
-            \Modules\Users\Database\Seeders\UserSeeders::class,
+            \Modules\Admins\Database\Seeders\AdminSeeders::class,
         ]);
     }
 }

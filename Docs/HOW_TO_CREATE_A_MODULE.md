@@ -17,6 +17,13 @@ app/Modules/
       │     └── NewModule.php
       ├── Providers/
       │     └── NewModuleServiceProvider.php
+      ├── Services/
+      │     └── NewModuleService.php
+      ├── Resource/
+      │     └── NewModuleResource.php
+      ├── Request/
+      │     ├── NewModuleCreateRequest.php
+      │     └── NewModuleCreateRequest.php
       ├── Database/
       │     ├── Migrations/
       │     │     └── Migration.php
