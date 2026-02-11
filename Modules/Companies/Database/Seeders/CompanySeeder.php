@@ -4,9 +4,12 @@ namespace Modules\Companies\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Modules\Companies\Services\CompanyService;
 
-class CompaniesSeeder extends Seeder
+class CompanySeeder extends Seeder
 {
     protected CompanyService $companyService;
 
@@ -43,13 +46,14 @@ class CompaniesSeeder extends Seeder
 
             $this->command->info("Provisioning tenant DB: {$dbName}");
 
-            // Provisionar la base de dades (crear BD + migracions)
             $provision = $this->companyService->provisionCompany($dbName, $defaultDbUser, $defaultDbPwd);
 
             if (!empty($provision['success']) && $provision['success'] === true) {
-                // Crear el registre a la taula companies
+
+                $this->seedTenantDatabase($dbName, $defaultDbUser, $defaultDbPwd);
+
                 $this->companyService->createCompany([
-                    'created_by_id' => 1, // Ajusta segons el teu usuari admin
+                    'created_by_id' => 1,
                     'name' => $c['name'],
                     'description' => $c['description'],
                     'cif' => $c['cif'],
@@ -63,5 +67,37 @@ class CompaniesSeeder extends Seeder
                 $this->command->error("✗ Failed to provision {$c['name']}: " . ($provision['message'] ?? 'unknown error'));
             }
         }
+    }
+
+    protected function seedTenantDatabase(string $dbName, string $dbUser, string $dbPassword): void
+    {
+        Config::set('database.connections.tenant', [
+            'driver' => 'pgsql',
+            'host' => config('database.connections.pgsql.host'),
+            'port' => config('database.connections.pgsql.port'),
+            'database' => $dbName,
+            'username' => $dbUser,
+            'password' => $dbPassword,
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'search_path' => 'public',
+            'sslmode' => 'prefer',
+        ]);
+
+        DB::purge('tenant');
+        DB::reconnect('tenant');
+
+        $this->command->info("  → Seeding VehicleTypes...");
+        Artisan::call('db:seed', [
+            '--class' => \Modules\Vehicles\Database\Seeders\VehicleTypeSeeder::class,
+            '--force' => true,
+        ]);
+
+        $this->command->info("  → Seeding Vehicles...");
+        Artisan::call('db:seed', [
+            '--class' => \Modules\Vehicles\Database\Seeders\VehicleSeeder::class,
+            '--force' => true,
+        ]);
     }
 }

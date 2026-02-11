@@ -56,7 +56,7 @@ class CompanyService
         return true;
     }
 
-    
+
     public function setTenant(string $dbName): void
     {
         Config::set('database.connections.tenant.database', $dbName);
@@ -68,8 +68,12 @@ class CompanyService
     {
         try {
             $defaultConnection = Config::get('database.default');
-            DB::connection($defaultConnection)->statement("CREATE DATABASE {$dbName}");
-            DB::connection($defaultConnection)->statement("GRANT ALL PRIVILEGES ON DATABASE {$dbName} TO {$dbUser}");
+
+            // Eliminar si existeix (per re-seeding)
+            DB::connection($defaultConnection)->statement("DROP DATABASE IF EXISTS \"{$dbName}\"");
+
+            DB::connection($defaultConnection)->statement("CREATE DATABASE \"{$dbName}\"");
+            DB::connection($defaultConnection)->statement("GRANT ALL PRIVILEGES ON DATABASE \"{$dbName}\" TO \"{$dbUser}\"");
 
             return true;
         } catch (\Exception $e) {
@@ -81,10 +85,11 @@ class CompanyService
     public function runCompanyMigrations(string $dbName, string $dbUser, string $dbPassword): bool
     {
         try {
+            // Configurar connexió temporal
             Config::set('database.connections.company_temp', [
                 'driver' => 'pgsql',
-                'host' => env('DB_HOST'),
-                'port' => env('DB_PORT'),
+                'host' => config('database.connections.pgsql.host'),
+                'port' => config('database.connections.pgsql.port'),
                 'database' => $dbName,
                 'username' => $dbUser,
                 'password' => $dbPassword,
@@ -96,16 +101,26 @@ class CompanyService
             ]);
 
             DB::purge('company_temp');
+            DB::reconnect('company_temp');
 
-            Artisan::call('migrate', [
+            $testDb = DB::connection('company_temp')->getDatabaseName();
+            Log::info("Running migrations on database: {$testDb}");
+
+            $exitCode = Artisan::call('migrate', [
                 '--database' => 'company_temp',
                 '--path' => 'Modules/Vehicles/Database/Migrations',
                 '--force' => true,
             ]);
 
+            if ($exitCode !== 0) {
+                $output = Artisan::output();
+                Log::error("Migration failed: {$output}");
+                return false;
+            }
+
             return true;
         } catch (\Exception $e) {
-            Log::error("Error running migrations: " . $e->getMessage());
+            Log::error("Error running migrations for {$dbName}: " . $e->getMessage());
             return false;
         }
     }

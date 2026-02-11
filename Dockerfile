@@ -10,7 +10,8 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     nodejs \
-    npm
+    npm \
+    netcat-openbsd
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -32,12 +33,13 @@ WORKDIR /var/www
 
 COPY . /var/www
 
-RUN composer install --no-interaction --optimize-autoloader --no-dev
+RUN composer install --no-interaction --optimize-autoloader
 RUN npm install && npm run build
 
 RUN chown -R www-data:www-data /var/www \
-    && chmod -R 755 /var/www/storage
+    && chmod -R 755 /var/www/storage \
+    && chmod +x /var/www/docker/entrypoint.sh
 
 EXPOSE 9000
 
-CMD ["php-fpm"]
+ENTRYPOINT ["/var/www/docker/entrypoint.sh"]
