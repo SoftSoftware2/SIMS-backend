@@ -33,6 +33,7 @@ class CompanyController extends Controller
     {
         $validated = $request->validated();
         $companyService = new CompanyService();
+
         $provision = $companyService->provisionCompany(
             $validated['db_conexion'],
             $validated['db_user'],
@@ -46,13 +47,20 @@ class CompanyController extends Controller
             ], 500);
         }
 
-        $company = Company::create($validated);
+        try {
+            $company = $companyService->createCompany($validated, $request->user());
 
-        return response()->json([
-            'success' => true,
-            'data' => new CompanyResource($company),
-            'message' => 'Company created successfully'
-        ], 201);
+            return response()->json([
+                'success' => true,
+                'data' => new CompanyResource($company),
+                'message' => 'Company created successfully'
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Company creation failed after provisioning'
+            ], 500);
+        }
     }
 
     /**

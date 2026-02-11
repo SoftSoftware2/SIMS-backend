@@ -6,9 +6,63 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
+use Modules\Companies\Models\Company;
 
 class CompanyService
 {
+
+    public function getAllCompanies()
+    {
+        return Company::all();
+    }
+
+    public function createCompany(array $data, $user = null)
+    {
+        if (!isset($data['created_by_id']) && $user) {
+            $data['created_by_id'] = $user->id;
+        }
+
+        return Company::create($data);
+    }
+
+    public function getCompanyById(int $id)
+    {
+        return Company::find($id);
+    }
+
+    public function updateCompany(int $id, array $data)
+    {
+        $company = Company::find($id);
+
+        if (!$company) {
+            return null;
+        }
+
+        $company->update($data);
+
+        return $company;
+    }
+
+    public function deleteCompany(int $id)
+    {
+        $company = Company::find($id);
+
+        if (!$company) {
+            return false;
+        }
+
+        $company->delete();
+
+        return true;
+    }
+
+    
+    public function setTenant(string $dbName): void
+    {
+        Config::set('database.connections.tenant.database', $dbName);
+        DB::purge('tenant');
+        DB::reconnect('tenant');
+    }
 
     public function createCompanyDatabase(string $dbName, string $dbUser, string $dbPassword): bool
     {
@@ -23,7 +77,6 @@ class CompanyService
             return false;
         }
     }
-
 
     public function runCompanyMigrations(string $dbName, string $dbUser, string $dbPassword): bool
     {
@@ -56,7 +109,6 @@ class CompanyService
             return false;
         }
     }
-
 
     public function provisionCompany(string $dbName, string $dbUser, string $dbPassword): array
     {
