@@ -22,11 +22,11 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:50',
-            'surname' => 'required|string|max:50',
-            'email' => 'required|string|email|max:70|unique:users',
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role_id' => 'nullable|integer',
+            'company_id' => 'nullable|exists:companies,id',
+            'role' => 'required|in:admin,manager',
         ];
     }
 
@@ -39,13 +39,15 @@ class StoreUserRequest extends FormRequest
     {
         return [
             'name.required' => 'El nom és obligatori.',
-            'surname.required' => 'El cognom és obligatori.',
             'email.required' => 'El correu electrònic és obligatori.',
             'email.email' => 'El correu electrònic ha de ser vàlid.',
             'email.unique' => 'Aquest correu electrònic ja està registrat.',
             'password.required' => 'La contrasenya és obligatòria.',
             'password.min' => 'La contrasenya ha de tenir almenys 8 caràcters.',
             'password.confirmed' => 'La confirmació de contrasenya no coincideix.',
+            'company_id.exists' => 'La companyia seleccionada no existeix.',
+            'role.required' => 'El rol és obligatori.',
+            'role.in' => 'El rol ha de ser admin o manager.',
         ];
     }
 }

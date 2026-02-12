@@ -106,6 +106,20 @@ class CompanyService
             $testDb = DB::connection('company_temp')->getDatabaseName();
             Log::info("Running migrations on database: {$testDb}");
 
+            // Run Users migrations first (tenant users table)
+            $exitCode = Artisan::call('migrate', [
+                '--database' => 'company_temp',
+                '--path' => 'Modules/Users/Database/Migrations',
+                '--force' => true,
+            ]);
+
+            if ($exitCode !== 0) {
+                $output = Artisan::output();
+                Log::error("Users migration failed: {$output}");
+                return false;
+            }
+
+            // Run Vehicles migrations
             $exitCode = Artisan::call('migrate', [
                 '--database' => 'company_temp',
                 '--path' => 'Modules/Vehicles/Database/Migrations',
@@ -114,7 +128,7 @@ class CompanyService
 
             if ($exitCode !== 0) {
                 $output = Artisan::output();
-                Log::error("Migration failed: {$output}");
+                Log::error("Vehicles migration failed: {$output}");
                 return false;
             }
 

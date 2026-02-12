@@ -11,8 +11,8 @@ echo "✅ PostgreSQL ready!"
 
 echo "📦 Running root migrations..."
 php artisan migrate --path="Modules/Users/Database/Migrations" --force
-php artisan migrate --path="database/migrations" --force
 php artisan migrate --path="Modules/Companies/Database/Migrations" --force
+php artisan migrate --path="database/migrations" --force
 php artisan migrate --path="Modules/Auth/Database/Migrations" --force
 echo "✅ Migrations completed!"
 

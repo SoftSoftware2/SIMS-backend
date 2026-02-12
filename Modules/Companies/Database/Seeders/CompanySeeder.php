@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Modules\Companies\Services\CompanyService;
+use Illuminate\Support\Facades\Hash;
 
 class CompanySeeder extends Seeder
 {
@@ -52,15 +53,27 @@ class CompanySeeder extends Seeder
 
                 $this->seedTenantDatabase($dbName, $defaultDbUser, $defaultDbPwd);
 
-                $this->companyService->createCompany([
-                    'created_by_id' => 1,
-                    'name' => $c['name'],
-                    'description' => $c['description'],
-                    'cif' => $c['cif'],
-                    'db_conexion' => $dbName,
-                    'db_user' => $defaultDbUser,
-                    'db_pwd' => $defaultDbPwd,
-                ]);
+                $company = \Modules\Companies\Models\Company::firstOrCreate(
+                    ['cif' => $c['cif']],
+                    [
+                        'created_by_id' => 1,
+                        'name' => $c['name'],
+                        'description' => $c['description'],
+                        'db_conexion' => $dbName,
+                        'db_user' => $defaultDbUser,
+                        'db_pwd' => $defaultDbPwd,
+                    ]
+                );
+
+                \Modules\Users\Models\User::firstOrCreate(
+                    ['email' => str_replace(['company_', '_'], ['', '.'], $dbName) . '@sims.com'],
+                    [
+                        'name' => $company->name . ' Manager',
+                        'password' => Hash::make('password'),
+                        'company_id' => $company->id,
+                        'role' => 'manager',
+                    ]
+                );
 
                 $this->command->info("✓ Company {$c['name']} created and provisioned.");
             } else {
@@ -87,6 +100,22 @@ class CompanySeeder extends Seeder
 
         DB::purge('tenant');
         DB::reconnect('tenant');
+
+        $this->command->info("  → Creating tenant admin...");
+        $tenantName = str_replace(['company_', '_'], ['', ' '], $dbName);
+        $tenantEmail = str_replace('_', '.', str_replace('company_', '', $dbName)) . '@sims.com';
+
+        // Check if user already exists
+        $existingUser = DB::connection('tenant')->table('users')->where('email', $tenantEmail)->first();
+        if (!$existingUser) {
+            DB::connection('tenant')->table('users')->insert([
+                'name' => ucfirst($tenantName) . ' Admin',
+                'email' => $tenantEmail,
+                'password' => Hash::make('password'),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
 
         $this->command->info("  → Seeding VehicleTypes...");
         Artisan::call('db:seed', [

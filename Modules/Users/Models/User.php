@@ -2,12 +2,12 @@
 
 namespace Modules\Users\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\Companies\Models\Company;
 
 class User extends Authenticatable
 {
@@ -23,6 +23,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'company_id',
+        'role',
     ];
 
     /**
@@ -35,15 +37,18 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    public function company()
     {
-        return [
-            'password' => 'hashed',
-        ];
+        return $this->belongsTo(Company::class);
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin' && $this->company_id === null;
+    }
+
+    public function isManager(): bool
+    {
+        return $this->role === 'manager' && $this->company_id !== null;
     }
 }

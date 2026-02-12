@@ -18,7 +18,7 @@ class UserController extends Controller
     public function index(): JsonResponse
     {
         $users = User::all();
-        
+
         return response()->json([
             'success' => true,
             'data' => UserResource::collection($users),
@@ -37,6 +37,8 @@ class UserController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
+            'company_id' => $validated['company_id'] ?? null,
+            'role' => $validated['role'],
         ]);
 
         return response()->json([
