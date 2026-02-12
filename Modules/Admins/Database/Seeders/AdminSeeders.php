@@ -3,7 +3,7 @@
 namespace Modules\Admins\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Modules\Admin\Models\Admin;
+use Modules\Admins\Models\Admin;
 
 class AdminSeeders extends Seeder
 {

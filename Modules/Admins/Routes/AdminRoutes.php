@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Admin\Controllers\AdminController;
+use Modules\Admins\Controllers\AdminController;
 
 // Todas las rutas de usuarios están protegidas con autenticación Sanctum
 Route::middleware('auth:sanctum')->group(function () {

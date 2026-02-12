@@ -3,7 +3,7 @@
 namespace Modules\Admins\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\AdminResource;
+use Modules\Admins\Resources\AdminResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Admins\Models\Admin;

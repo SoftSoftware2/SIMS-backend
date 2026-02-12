@@ -33,24 +33,7 @@ app/Modules/
             └── NewModuleRoutes.php
 ```
 
-### 2. Update composer.json Autoload
-
-Add your module's namespace to the `autoload` section in `composer.json`:
-
-```json
-"autoload": {
-    "psr-4": {
-        "App\\": "app/",
-        "Modules\\NewModule\\": "app/Modules/NewModule/"
-    }
-},
-```
-After editing, run:
-```bash
-composer dump-autoload
-```
-
-### 3. Create the Module Service Provider
+### 2. Create the Module Service Provider
 
 Create a Service Provider for your module, for example:
 
@@ -76,9 +59,9 @@ class NewModuleServiceProvider extends ServiceProvider
 }
 ```
 
-### 4. Register the Service Provider
+### 3. Register the Service Provider
 
-Add your module's Service Provider to the providers list. You can do this in `config/app.php` or in `bootstrap/providers.php` depending on your setup:
+Add your module's Service Provider to the providers list. You can do this in  `bootstrap/providers.php`:
 
 ```php
 // config/providers.php
