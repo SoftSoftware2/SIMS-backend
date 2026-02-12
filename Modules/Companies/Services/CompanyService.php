@@ -11,6 +11,13 @@ use Modules\Companies\Models\Company;
 class CompanyService
 {
 
+    protected $tenantService;
+
+    public function __construct(TenantService $tenantService)
+    {
+        $this->tenantService = $tenantService;
+    }
+
     public function getAllCompanies()
     {
         return Company::all();
@@ -56,14 +63,6 @@ class CompanyService
         return true;
     }
 
-
-    public function setTenant(string $dbName): void
-    {
-        Config::set('database.connections.tenant.database', $dbName);
-        DB::purge('tenant');
-        DB::reconnect('tenant');
-    }
-
     public function createCompanyDatabase(string $dbName, string $dbUser, string $dbPassword): bool
     {
         try {
@@ -76,7 +75,8 @@ class CompanyService
             DB::connection($defaultConnection)->statement("GRANT ALL PRIVILEGES ON DATABASE \"{$dbName}\" TO \"{$dbUser}\"");
 
             return true;
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             Log::error("Error creating database: " . $e->getMessage());
             return false;
         }
@@ -133,7 +133,8 @@ class CompanyService
             }
 
             return true;
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             Log::error("Error running migrations for {$dbName}: " . $e->getMessage());
             return false;
         }

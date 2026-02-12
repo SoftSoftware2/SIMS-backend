@@ -29,10 +29,9 @@ class CompanyController extends Controller
     /**
      * Store a newly created company.
      */
-    public function store(StoreCompanyRequest $request): JsonResponse
+    public function store(StoreCompanyRequest $request, CompanyService $companyService): JsonResponse
     {
         $validated = $request->validated();
-        $companyService = new CompanyService();
 
         $provision = $companyService->provisionCompany(
             $validated['db_conexion'],
@@ -55,7 +54,8 @@ class CompanyController extends Controller
                 'data' => new CompanyResource($company),
                 'message' => 'Company created successfully'
             ], 201);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Company creation failed after provisioning'

@@ -11,6 +11,13 @@ use Modules\Companies\Models\Company;
 
 class SetTenantConnection
 {
+    protected $tenantService;
+
+    public function __construct(\Modules\Companies\Services\TenantService $tenantService)
+    {
+        $this->tenantService = $tenantService;
+    }
+
     public function handle(Request $request, Closure $next): Response
     {
         $companyId = $request->header('X-Company-ID');
@@ -25,7 +32,8 @@ class SetTenantConnection
                     return response()->json([
                         'error' => 'Unauthorized - You can only access your own company',
                     ], 403);
-                } elseif (!$user->isAdmin() && !$user->isManager()) {
+                }
+                elseif (!$user->isAdmin() && !$user->isManager()) {
                     return response()->json([
                         'error' => 'Unauthorized',
                     ], 403);
@@ -35,22 +43,7 @@ class SetTenantConnection
             $company = Company::find($companyId);
 
             if ($company) {
-                Config::set('database.connections.tenant', [
-                    'driver' => 'pgsql',
-                    'host' => config('database.connections.pgsql.host'),
-                    'port' => config('database.connections.pgsql.port'),
-                    'database' => $company->db_conexion,
-                    'username' => $company->db_user,
-                    'password' => $company->db_pwd,
-                    'charset' => 'utf8',
-                    'prefix' => '',
-                    'prefix_indexes' => true,
-                    'search_path' => 'public',
-                    'sslmode' => 'prefer',
-                ]);
-
-                DB::purge('tenant');
-                DB::reconnect('tenant');
+                $this->tenantService->switchToTenant($company);
             }
         }
 
