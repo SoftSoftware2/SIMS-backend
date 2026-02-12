@@ -17,6 +17,13 @@ app/Modules/
       │     └── NewModule.php
       ├── Providers/
       │     └── NewModuleServiceProvider.php
+      ├── Services/
+      │     └── NewModuleService.php
+      ├── Resource/
+      │     └── NewModuleResource.php
+      ├── Request/
+      │     ├── NewModuleCreateRequest.php
+      │     └── NewModuleCreateRequest.php
       ├── Database/
       │     ├── Migrations/
       │     │     └── Migration.php
@@ -26,24 +33,7 @@ app/Modules/
             └── NewModuleRoutes.php
 ```
 
-### 2. Update composer.json Autoload
-
-Add your module's namespace to the `autoload` section in `composer.json`:
-
-```json
-"autoload": {
-    "psr-4": {
-        "App\\": "app/",
-        "Modules\\NewModule\\": "app/Modules/NewModule/"
-    }
-},
-```
-After editing, run:
-```bash
-composer dump-autoload
-```
-
-### 3. Create the Module Service Provider
+### 2. Create the Module Service Provider
 
 Create a Service Provider for your module, for example:
 
@@ -69,12 +59,12 @@ class NewModuleServiceProvider extends ServiceProvider
 }
 ```
 
-### 4. Register the Service Provider
+### 3. Register the Service Provider
 
-Add your module's Service Provider to the providers list. You can do this in `config/app.php` or in `bootstrap/providers.php` depending on your setup:
+Add your module's Service Provider to the providers list. You can do this in  `bootstrap/providers.php`:
 
 ```php
-// config/app.php
+// config/providers.php
 'providers' => [
     App\Providers\AppServiceProvider::class,
     // Other providers...
@@ -86,6 +76,6 @@ Add your module's Service Provider to the providers list. You can do this in `co
 ### Migrations & seeders
 
 ```bash
-php artisan make:migration companies --path=Modules/Companies/Database/Migrations
+php artisan make:migration newmodule --path=Modules/NewModule/Database/Migrations
 ```
 ---
