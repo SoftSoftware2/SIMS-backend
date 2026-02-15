@@ -20,6 +20,8 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             \Modules\Admins\Database\Seeders\AdminSeeders::class,
+            \Modules\Vehicles\Database\Seeders\VehicleSeeder::class,
+            \Modules\Vehicles\Database\Seeders\VehicleTypeSeeder::class,
         ]);
 
         $this->call([

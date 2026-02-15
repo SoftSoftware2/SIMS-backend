@@ -10,9 +10,7 @@ use Modules\Admins\Models\Admin;
 
 class AuthController extends Controller
 {
-    /**
-     * Login admin and generate token
-     */
+
     public function login(Request $request): JsonResponse
     {
         $request->validate([
