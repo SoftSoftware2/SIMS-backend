@@ -5,9 +5,8 @@ return [
 
     //Modules
 
+    Modules\Auth\Providers\AuthServiceProvider::class,
     Modules\Companies\Providers\CompaniesServiceProviders::class,
     Modules\Users\Providers\UsersServiceProvider::class,
     Modules\Auth\Providers\AuthServiceProvider::class,
-    Modules\Vehicles\Providers\VehiclesServiceProviders::class,
-
 ];

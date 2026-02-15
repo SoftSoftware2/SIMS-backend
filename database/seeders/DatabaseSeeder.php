@@ -17,7 +17,8 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-       $this->call([
+        $this->call([
+            \Modules\Admins\Database\Seeders\AdminSeeders::class,
             \Modules\Vehicles\Database\Seeders\VehicleSeeder::class,
             \Modules\Vehicles\Database\Seeders\VehicleTypeSeeder::class,
         ]);
