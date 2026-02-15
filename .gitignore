@@ -16,11 +16,8 @@
 /public/build
 /public/hot
 /public/storage
-/storage/*
-!/storage/.gitignore
-!/storage/app/.gitignore
-!/storage/framework/.gitignore
-!/storage/logs/.gitignore
+/storage/*.key
+/storage/pail
 /vendor
 Homestead.json
 Homestead.yaml
