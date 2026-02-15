@@ -3,90 +3,54 @@
 namespace Modules\Auth\Controllers;
 
 use App\Http\Controllers\Controller;
-use Modules\Users\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
+use Modules\Admins\Models\Admin;
 
 class AuthController extends Controller
 {
-    
-    public function register(Request $request): JsonResponse
-    {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:50',
-            'email' => 'required|string|email|max:70|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
-
-        $user = User::create([
-            'name' => $validatedData['name'],
-            'email' => $validatedData['email'],
-            'pwd' => Hash::make($validatedData['password']),
-        ]);
-
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Usuari registrat correctament',
-            'data' => [
-                'user' => $user,
-                'access_token' => $token,
-                'token_type' => 'Bearer',
-            ]
-        ], 201);
-    }
-
-   
+    /**
+     * Login admin and generate token
+     */
     public function login(Request $request): JsonResponse
     {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+        $request->validate([
+            'email' => 'required|string|email|max:70',
+            'password' => 'required|string|min:8',
         ]);
 
-        if (!Auth::attempt($credentials)) {
+        // Buscar usuario por email
+        $admin = Admin::where('email', $request->email)->first();
+
+        // Verificar si el usuario existe y la contraseña es correcta
+        if (!$admin || !Hash::check($request->password, $admin->password)) {
             return response()->json([
-                'success' => false,
-                'message' => 'Les credencials són incorrectes'
+                'message' => 'Invalid credentials'
             ], 401);
         }
 
-        $user = User::where('email', $request['email'])->firstOrFail();
-        $token = $user->createToken('auth_token')->plainTextToken;
+        // Generar token
+        $token = $admin->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'success' => true,
-            'message' => 'Inici de sessió correcte',
-            'data' => [
-                'user' => $user,
-                'access_token' => $token,
-                'token_type' => 'Bearer',
-            ]
+            'message' => 'Login successful',
+            'token' => $token,
+            'admin' => $admin
         ], 200);
     }
 
-    
+    /**
+     * Logout admin (revoke current token)
+     */
     public function logout(Request $request): JsonResponse
     {
-        
+        // Revocar el token actual del usuario autenticado
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([
-            'success' => true,
-            'message' => 'Sessió tancada correctament'
+            'message' => 'Logged out successfully'
         ], 200);
     }
 
-    
-    public function me(Request $request): JsonResponse
-    {
-        return response()->json([
-            'success' => true,
-            'data' => $request->user(),
-            'message' => 'Perfil recuperat correctament'
-        ], 200);
-    }
 }
